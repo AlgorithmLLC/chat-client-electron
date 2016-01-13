@@ -59,7 +59,7 @@ const handleSetupEvent = function() {
       // we update to the new version - it's the opposite of
       // --squirrel-updated
 
-      setTimeout(app.quit, 1000);
+      app.quit();
       return true;
   }
 };
@@ -67,13 +67,40 @@ if (handleSetupEvent()) {
   return;
 }
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-  app.quit();
+let downloadedUpdate = false;
+
+const GhReleases = require('electron-gh-releases')
+let options = {
+  repo: 'AlgorithmLLC/chat-client-electron',
+  currentVersion: app.getVersion()
+};
+const updater = new GhReleases(options);
+// Check for updates
+// `status` returns true if there is a new update available
+updater.check((err, status) => {
+  if (!err && status) {
+    // Download the update
+    updater.download();
+  }
+});
+// When an update has been downloaded
+updater.on('update-downloaded', (info) => {
+  // Restart the app and install the update
+  downloadedUpdate = true;
 });
 
-let mainWindow;
 
+// Quit when all windows are closed.
+app.on('window-all-closed', function() {
+  if (downloadedUpdate) {
+    updater.install();
+  } else {
+    app.quit();
+  }
+});
+
+
+let mainWindow;
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function() {

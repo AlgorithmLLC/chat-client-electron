@@ -3,5 +3,8 @@
   "productName": "Birdex",
   "description": "Secure chat",
   "author": "Algorithm LLC",
-  "main": "main.js"
+  "main": "main.js",
+  "dependencies": {
+    "electron-gh-releases": "^2.0.2"
+  }
 }

@@ -21,7 +21,8 @@ grunt.initConfig
       src: 'electron/electron.exe'
       dest: 'build/Birdex.exe'
     app:
-      src: 'app/*'
+      expand: true
+      src: 'app/**'
       dest: 'build/resources/'
 
   rcedit:
@@ -48,7 +49,7 @@ grunt.initConfig
       exe: 'Birdex.exe'
       noMsi: true
       setupIcon: 'app/birdex.ico'
-      iconUrl: 'https://raw.githubusercontent.com/AlgorithmLLC/chat-client-electron/app/birdex.ico'
+      iconUrl: 'https://cdn.rawgit.com/AlgorithmLLC/chat-client-electron/master/app/birdex.ico'
       remoteReleases: 'https://github.com/AlgorithmLLC/chat-client-electron'
 
 grunt.registerTask 'default', ['clean', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']
