@@ -5,6 +5,7 @@
   "author": "Algorithm LLC",
   "main": "main.js",
   "dependencies": {
+    "electron-debug": "^0.5.1",
     "electron-gh-releases": "^2.0.2"
   }
 }

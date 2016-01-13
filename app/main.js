@@ -99,6 +99,9 @@ app.on('window-all-closed', function() {
   }
 });
 
+require('electron-debug')({
+    showDevTools: false
+});
 
 let mainWindow;
 // This method will be called when Electron has finished
@@ -138,9 +141,6 @@ app.on('ready', function() {
   // mainWindow.loadURL('http://new.001.birdex.org/');
   // mainWindow.loadURL('http://oleg.dev:8000/index-dev.html');
   // mainWindow.loadURL('http://oleg.dev:8000/index.html');
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
