@@ -2,6 +2,10 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 
+require('electron-debug')({
+    showDevTools: false
+});
+
 const handleSetupEvent = function() {
   if (process.argv.length === 1) {
     return false;
@@ -83,25 +87,12 @@ updater.check((err, status) => {
     updater.download();
   }
 });
-// When an update has been downloaded
-updater.on('update-downloaded', (info) => {
-  // Restart the app and install the update
-  downloadedUpdate = true;
-});
-
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
-  if (downloadedUpdate) {
-    updater.install();
-  } else {
-    app.quit();
-  }
+  app.quit();
 });
 
-require('electron-debug')({
-    showDevTools: false
-});
 
 let mainWindow;
 // This method will be called when Electron has finished
