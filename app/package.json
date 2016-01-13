@@ -1,0 +1,7 @@
+{
+  "name": "birdex",
+  "productName": "Birdex",
+  "description": "Secure chat",
+  "author": "Algorithm LLC",
+  "main": "main.js"
+}
