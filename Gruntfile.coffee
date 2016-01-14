@@ -6,6 +6,7 @@ grunt.loadNpmTasks 'grunt-contrib-copy'
 grunt.loadNpmTasks 'grunt-rcedit'
 grunt.loadNpmTasks 'grunt-electron-installer'
 grunt.loadNpmTasks 'grunt-shell'
+grunt.loadNpmTasks 'grunt-download-electron'
 
 version = require('./package.json').version
 
@@ -20,6 +21,10 @@ grunt.initConfig
       command: 'taskkill /f /im birdex.exe /t'
     run:
       command: path.resolve(__dirname, 'build', 'birdex.exe')
+
+  'download-electron':
+    version: '0.36.3'
+    outputDir: 'electron'
 
   copy:
     electron:
@@ -62,5 +67,5 @@ grunt.initConfig
       iconUrl: 'https://cdn.rawgit.com/AlgorithmLLC/chat-client-electron/master/app/birdex.ico'
       remoteReleases: 'https://github.com/AlgorithmLLC/chat-client-electron'
 
-grunt.registerTask 'build', ['shell:kill', 'clean', 'copy', 'rcedit', 'shell:run', 'shell:kill']
-grunt.registerTask 'default', ['shell:kill', 'clean', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']
+grunt.registerTask 'build', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'shell:run', 'shell:kill']
+grunt.registerTask 'default', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']

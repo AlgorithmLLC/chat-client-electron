@@ -2,14 +2,13 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const localShortcut = require('electron-localshortcut');
 
 const APP_URL = 'app://birdex/index.html'; // birdex.asar
 // const APP_URL = 'http://new.001.birdex.org/';
 // const APP_URL = 'http://oleg.dev:8000/index-dev.html';
 // const APP_URL = 'http://oleg.dev:8000/index.html';
 
-const handleSetupEvent = function() {
+const handleStartupEvent = function() {
   if (process.argv.length === 1) {
     return false;
   }
@@ -49,7 +48,6 @@ const handleSetupEvent = function() {
 
       spawnUpdate(['--createShortcut', exeName]);
 
-      setTimeout(app.quit, 1000);
       return true;
 
     case '--squirrel-uninstall':
@@ -58,7 +56,6 @@ const handleSetupEvent = function() {
 
       spawnUpdate(['--removeShortcut', exeName]);
 
-      setTimeout(app.quit, 1000);
       return true;
 
     case '--squirrel-obsolete':
@@ -66,65 +63,44 @@ const handleSetupEvent = function() {
       // we update to the new version - it's the opposite of
       // --squirrel-updated
 
-      app.quit();
       return true;
   }
 };
-if (handleSetupEvent()) {
-  return;
-}
-
-function devTools() {
-  const win = BrowserWindow.getFocusedWindow();
-
-  if (win) {
-    win.toggleDevTools();
-  }
-}
-
-function refresh() {
-  const win = BrowserWindow.getFocusedWindow();
-
-  // return console.log(APP_URL.substr(3));
-  if (win) {
-    if (APP_URL.substr(0, 3) === 'app') {
-      win.loadURL(APP_URL);
-    } else {
-      win.webContents.reloadIgnoringCache();
-    }
-  }
+if (handleStartupEvent()) {
+  return setTimeout(app.quit, 1000);
 }
 
 app.on('ready', () => {
-  localShortcut.register('Ctrl+Shift+I', devTools);
-  localShortcut.register('F12', devTools);
+  const localShortcut = require('electron-localshortcut');
+  const openDevTools = function() {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.toggleDevTools();
+    }
+  }
+
+  const refresh = function() {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      if (APP_URL.substr(0, 3) === 'app') {
+        win.loadURL(APP_URL);
+      } else {
+        win.webContents.reloadIgnoringCache();
+      }
+    }
+  }
+
+  localShortcut.register('Ctrl+Shift+I', openDevTools);
+  localShortcut.register('F12', openDevTools);
 
   localShortcut.register('CmdOrCtrl+R', refresh);
   localShortcut.register('F5', refresh);
-});
-
-let downloadedUpdate = false;
-
-const GhReleases = require('electron-gh-releases')
-let options = {
-  repo: 'AlgorithmLLC/chat-client-electron',
-  currentVersion: app.getVersion()
-};
-const updater = new GhReleases(options);
-// Check for updates
-// `status` returns true if there is a new update available
-updater.check((err, status) => {
-  if (!err && status) {
-    // Download the update
-    updater.download();
-  }
 });
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
   app.quit();
 });
-
 
 let mainWindow;
 // This method will be called when Electron has finished
@@ -135,8 +111,9 @@ app.on('ready', function() {
     let url = request.url.substr(12);
     callback({path: require('path').normalize(__dirname + '/birdex.asar/' + url)});
   }, function (error) {
-    if (error)
-      console.error('Failed to register protocol')
+    if (error) {
+      console.error('Failed to register protocol');
+    }
   });
 
   // bugfix for <img ng-src> requesting unsafe:app://birdex/path
@@ -144,12 +121,13 @@ app.on('ready', function() {
     let url = request.url.substr(19);
     callback({path: require('path').normalize(__dirname + '/birdex.asar/' + url)});
   }, function (error) {
-    if (error)
-      console.error('Failed to register protocol')
+    if (error) {
+      console.error('Failed to register protocol');
+    }
   });
 
   // Create the browser window.
-  mainWindow = new electron.BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280
     , height: 720
     , minHeight: 720
@@ -161,12 +139,26 @@ app.on('ready', function() {
 
   // and load the index.html of the app.
   mainWindow.loadURL(APP_URL);
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  const GhReleases = require('electron-gh-releases');
+  let options = {
+    repo: 'AlgorithmLLC/chat-client-electron',
+    currentVersion: app.getVersion()
+  };
+  const updater = new GhReleases(options);
+  // Check for updates
+  // `status` returns true if there is a new update available
+  updater.check((err, status) => {
+    if (!err && status) {
+      // Download the update
+      updater.download();
+    }
   });
 });
