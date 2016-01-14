@@ -1,10 +1,13 @@
 'use strict';
 const electron = require('electron');
-const app = electron.app;  // Module to control application life.
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const localShortcut = require('electron-localshortcut');
 
-require('electron-debug')({
-    showDevTools: false
-});
+const APP_URL = 'app://birdex/index.html'; // birdex.asar
+// const APP_URL = 'http://new.001.birdex.org/';
+// const APP_URL = 'http://oleg.dev:8000/index-dev.html';
+// const APP_URL = 'http://oleg.dev:8000/index.html';
 
 const handleSetupEvent = function() {
   if (process.argv.length === 1) {
@@ -71,6 +74,35 @@ if (handleSetupEvent()) {
   return;
 }
 
+function devTools() {
+  const win = BrowserWindow.getFocusedWindow();
+
+  if (win) {
+    win.toggleDevTools();
+  }
+}
+
+function refresh() {
+  const win = BrowserWindow.getFocusedWindow();
+
+  // return console.log(APP_URL.substr(3));
+  if (win) {
+    if (APP_URL.substr(0, 3) === 'app') {
+      win.loadURL(APP_URL);
+    } else {
+      win.webContents.reloadIgnoringCache();
+    }
+  }
+}
+
+app.on('ready', () => {
+  localShortcut.register('Ctrl+Shift+I', devTools);
+  localShortcut.register('F12', devTools);
+
+  localShortcut.register('CmdOrCtrl+R', refresh);
+  localShortcut.register('F5', refresh);
+});
+
 let downloadedUpdate = false;
 
 const GhReleases = require('electron-gh-releases')
@@ -128,10 +160,7 @@ app.on('ready', function() {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL('app://birdex/index.html');
-  // mainWindow.loadURL('http://new.001.birdex.org/');
-  // mainWindow.loadURL('http://oleg.dev:8000/index-dev.html');
-  // mainWindow.loadURL('http://oleg.dev:8000/index.html');
+  mainWindow.loadURL(APP_URL);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {

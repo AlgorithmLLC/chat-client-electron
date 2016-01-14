@@ -1,11 +1,11 @@
 {
   "name": "birdex",
   "productName": "Birdex",
-  "description": "Secure chat",
+  "description": "Birdex",
   "author": "Algorithm LLC",
   "main": "main.js",
   "dependencies": {
-    "electron-debug": "^0.5.1",
+    "electron-localshortcut": "^0.6.0",
     "electron-gh-releases": "^2.0.2"
   }
 }
