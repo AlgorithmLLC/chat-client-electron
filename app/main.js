@@ -3,7 +3,7 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
-const APP_URL = 'app://birdex/index.html'; // birdex.asar
+const APP_URL = 'app://birdex/index.html'; // birdex.asar or birdex/web folder
 // const APP_URL = 'http://new.001.birdex.org/';
 // const APP_URL = 'http://oleg.dev:8000/index-dev.html';
 // const APP_URL = 'http://oleg.dev:8000/index.html';
@@ -107,9 +107,11 @@ let mainWindow;
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
   const protocol = electron.protocol;
+  const birdexFolderExists = require('fs').existsSync(__dirname + '/birdex/web/');
+
   protocol.registerFileProtocol('app', function(request, callback) {
     let url = request.url.substr(12);
-    callback({path: require('path').normalize(__dirname + '/birdex.asar/' + url)});
+    callback({path: require('path').normalize(__dirname + '/birdex' + (birdexFolderExists ? '' : '.asar') + '/' + url)});
   }, function (error) {
     if (error) {
       console.error('Failed to register protocol');
@@ -119,7 +121,7 @@ app.on('ready', function() {
   // bugfix for <img ng-src> requesting unsafe:app://birdex/path
   protocol.registerFileProtocol('unsafe', function(request, callback) {
     let url = request.url.substr(19);
-    callback({path: require('path').normalize(__dirname + '/birdex.asar/' + url)});
+    callback({path: require('path').normalize(__dirname + '/birdex' + (birdexFolderExists ? '' : '.asar') + '/' + url)});
   }, function (error) {
     if (error) {
       console.error('Failed to register protocol');

@@ -3,3 +3,5 @@ node_modules
 electron
 build
 release
+algorithm.pfx
+app/birdex/

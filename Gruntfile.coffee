@@ -37,8 +37,9 @@ grunt.initConfig
       dest: 'build/Birdex.exe'
     app:
       expand: true
-      src: 'app/**'
-      dest: 'build/resources/'
+      cwd: 'app/'
+      src: ['*', 'node_modules/**']
+      dest: 'build/resources/app/'
 
   rcedit:
     exes:
@@ -52,8 +53,8 @@ grunt.initConfig
         'version-string':
           'ProductName': 'Birdex'
           'FileDescription': 'Secure messenger'
-          'CompanyName': 'Algorithm LLC'
-          'LegalCopyright': 'Copyright © 2016 Algorithm LLC. All rights reserved.'
+          'CompanyName': 'Algorithm Corporation L.P.'
+          'LegalCopyright': 'Copyright © 2016 Algorithm Corporation L.P. All rights reserved.'
 
   'create-windows-installer':
     ia32:
@@ -65,7 +66,12 @@ grunt.initConfig
       noMsi: true
       setupIcon: 'app/birdex.ico'
       iconUrl: 'https://cdn.rawgit.com/AlgorithmLLC/chat-client-electron/master/app/birdex.ico'
+      owners: 'Algorithm Corporation L.P.'
+      authors: 'Algorithm Corporation L.P.'
       remoteReleases: 'https://github.com/AlgorithmLLC/chat-client-electron'
+      certificateFile: 'algorithm.pfx'
+      certificatePassword: ''
 
 grunt.registerTask 'build', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'shell:run', 'shell:kill']
-grunt.registerTask 'default', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']
+grunt.registerTask 'release', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']
+# grunt.registerTask 'default', []
