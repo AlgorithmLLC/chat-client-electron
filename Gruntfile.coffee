@@ -10,6 +10,9 @@ grunt.loadNpmTasks 'grunt-download-electron'
 
 version = require('./package.json').version
 
+certificateFile = 'algorithm.pfx'
+certificatePassword = ''
+
 grunt.initConfig
   clean:
     build: 'build'
@@ -23,7 +26,7 @@ grunt.initConfig
       command: path.resolve(__dirname, 'build', 'birdex.exe')
 
   'download-electron':
-    version: '0.36.3'
+    version: '0.36.8'
     outputDir: 'electron'
 
   copy:
@@ -40,6 +43,11 @@ grunt.initConfig
       cwd: 'app/'
       src: ['*', 'node_modules/**']
       dest: 'build/resources/app/'
+    releases:
+      expand: true
+      cwd: 'release/'
+      src: ['*']
+      dest: 'release~/'
 
   rcedit:
     exes:
@@ -69,8 +77,8 @@ grunt.initConfig
       owners: 'Algorithm Corporation L.P.'
       authors: 'Algorithm Corporation L.P.'
       remoteReleases: 'https://github.com/AlgorithmLLC/chat-client-electron'
-      certificateFile: 'algorithm.pfx'
-      certificatePassword: ''
+
+      signWithParams: "/a /f \"#{path.resolve(certificateFile)}\" /p \"#{certificatePassword}\" /fd sha256 /tr http://timestamp.comodoca.com/?td=sha256 /td sha256"
 
 grunt.registerTask 'build', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'shell:run', 'shell:kill']
 grunt.registerTask 'release', ['shell:kill', 'clean', 'download-electron', 'copy', 'rcedit', 'create-windows-installer', 'clean:build']
