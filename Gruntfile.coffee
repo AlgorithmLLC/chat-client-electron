@@ -26,7 +26,7 @@ grunt.initConfig
       command: path.resolve(__dirname, 'build', 'birdex.exe')
 
   'download-electron':
-    version: '0.36.8'
+    version: '0.37.8'
     outputDir: 'electron'
 
   copy:
